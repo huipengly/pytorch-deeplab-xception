@@ -8,7 +8,7 @@ class Path(object):
         elif dataset == 'cityscapes':
             return '/path/to/datasets/cityscapes/'     # foler that contains leftImg8bit/
         elif dataset == 'coco':
-            return '/path/to/datasets/coco/'
+            return '/home/huipengly/Documents/datasets/coco2017'
         else:
             print('Dataset {} not available.'.format(dataset))
             raise NotImplementedError

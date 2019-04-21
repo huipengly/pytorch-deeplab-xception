@@ -1,4 +1,5 @@
 from dataloaders.datasets import cityscapes, coco, combine_dbs, pascal, sbd
+from dataloaders.datasets.ycb import SegDataset
 from torch.utils.data import DataLoader
 
 def make_data_loader(args, **kwargs):
@@ -36,6 +37,17 @@ def make_data_loader(args, **kwargs):
         val_loader = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, **kwargs)
         test_loader = None
         return train_loader, val_loader, test_loader, num_class
+
+    elif args.dataset == 'ycb':
+        train_set = SegDataset('/home/huipengly/data/Pictures/YCB_Video_Dataset/data',
+                             '/home/huipengly/data/Pictures/YCB_Video_Dataset/image_sets/train.txt', True)
+        val_set = SegDataset('/home/huipengly/data/Pictures/YCB_Video_Dataset/data',
+                                  '/home/huipengly/data/Pictures/YCB_Video_Dataset/image_sets/val.txt', False)
+        train_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, **kwargs)
+        val_loader = DataLoader(val_set, batch_size=1, shuffle=True, **kwargs)
+
+        test_loader = None
+        return train_loader, val_loader, test_loader, 22
 
     else:
         raise NotImplementedError

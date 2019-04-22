@@ -67,22 +67,26 @@ class Trainer(object):
             patch_replication_callback(self.model)
             self.model = self.model.cuda()
 
-        # Resuming checkpoint
+        # resume
+        checkpoint = torch.load('/home/huipengly/SemanticSegmentationModels/pytorch-deeplab-xception/run/ycb/deeplab-resnet/model_4_0.11272375160249037.pth')
+        self.model.module.load_state_dict(checkpoint)
         self.best_pred = 0.0
-        if args.resume is not None:
-            if not os.path.isfile(args.resume):
-                raise RuntimeError("=> no checkpoint found at '{}'" .format(args.resume))
-            checkpoint = torch.load(args.resume)
-            args.start_epoch = checkpoint['epoch']
-            if args.cuda:
-                self.model.module.load_state_dict(checkpoint['state_dict'])
-            else:
-                self.model.load_state_dict(checkpoint['state_dict'])
-            if not args.ft:
-                self.optimizer.load_state_dict(checkpoint['optimizer'])
-            self.best_pred = checkpoint['best_pred']
-            print("=> loaded checkpoint '{}' (epoch {})"
-                  .format(args.resume, checkpoint['epoch']))
+        # # Resuming checkpoint
+        # self.best_pred = 0.0
+        # if args.resume is not None:
+        #     if not os.path.isfile(args.resume):
+        #         raise RuntimeError("=> no checkpoint found at '{}'" .format(args.resume))
+        #     checkpoint = torch.load(args.resume)
+        #     args.start_epoch = checkpoint['epoch']
+        #     if args.cuda:
+        #         self.model.module.load_state_dict(checkpoint['state_dict'])
+        #     else:
+        #         self.model.load_state_dict(checkpoint['state_dict'])
+        #     if not args.ft:
+        #         self.optimizer.load_state_dict(checkpoint['optimizer'])
+        #     self.best_pred = checkpoint['best_pred']
+        #     print("=> loaded checkpoint '{}' (epoch {})"
+        #           .format(args.resume, checkpoint['epoch']))
 
         # Clear start epoch if fine-tuning
         if args.ft:
@@ -94,8 +98,8 @@ class Trainer(object):
         tbar = tqdm(self.train_loader)
         num_img_tr = len(self.train_loader)
         for i, sample in enumerate(tbar):
-            # if i > 30:
-            #     break
+            if i > 30:
+                break
             image, target = sample['image'], sample['label']
             if self.args.cuda:
                 image, target = image.cuda(), target.cuda()
